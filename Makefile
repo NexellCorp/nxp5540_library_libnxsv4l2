@@ -20,7 +20,7 @@ $(LIB_TARGET): $(OBJS)
 
 install: $(LIB_TARGET)
 	cp $^ ../libs
-	cp nxs-v4l2.h ../include
+	cp nxs-v4l2.h nxs_v4l2.h ../include
 
 all: $(LIB_TARGET)
 

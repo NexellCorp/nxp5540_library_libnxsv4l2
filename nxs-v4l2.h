@@ -24,6 +24,8 @@ extern "C" {
 #endif
 
 #include <linux/videodev2.h>
+#include <linux/v4l2-subdev.h>
+#include "nxs_v4l2.h"
 
 int nxs_v4l2_querycap(int fd, struct v4l2_capability *cap);
 int nxs_v4l2_enum_format(int fd, struct v4l2_fmtdesc *desc);
@@ -55,6 +57,27 @@ int nxs_v4l2_get_selection(int fd, struct v4l2_selection *sel);
 int nxs_v4l2_set_selection(int fd, struct v4l2_selection *sel);
 int nxs_v4l2_ioctl(int fd, int cmd, void *arg);
 
+/* subdev */
+int nxs_v4l2_subdev_set_format(int fd, uint32_t w, uint32_t h, uint32_t code,
+			       uint32_t field);
+int nxs_v4l2_subdev_get_format(int fd, uint32_t *w, uint32_t *h, uint32_t *code,
+			       uint32_t *field);
+int nxs_v4l2_subdev_try_format(int fd, uint32_t w, uint32_t h, uint32_t code,
+			       uint32_t field);
+int nxs_v4l2_subdev_set_dstformat(int fd, uint32_t w, uint32_t h, uint32_t code,
+				  uint32_t field);
+int nxs_v4l2_subdev_get_dstformat(int fd, uint32_t *w, uint32_t *h,
+				  uint32_t *code, uint32_t *field);
+int nxs_v4l2_subdev_try_dstformat(int fd, uint32_t w, uint32_t h, uint32_t code,
+				  uint32_t field);
+int nxs_v4l2_subdev_set_crop(int fd, uint32_t x, uint32_t y, uint32_t w,
+			     uint32_t h);
+int nxs_v4l2_subdev_get_crop(int fd, uint32_t *x, uint32_t *y, uint32_t *w,
+			     uint32_t *h);
+int nxs_v4l2_subdev_try_crop(int fd, uint32_t x, uint32_t y, uint32_t w,
+			     uint32_t h);
+int nxs_v4l2_subdev_start(int fd);
+int nxs_v4l2_subdev_stop(int fd);
 #ifdef __cplusplus
 }
 #endif

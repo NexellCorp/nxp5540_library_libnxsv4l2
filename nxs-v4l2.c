@@ -30,6 +30,7 @@
 #include <sys/ioctl.h>
 
 #include "nxs-v4l2.h"
+#include "nxs_v4l2.h"
 
 int nxs_v4l2_querycap(int fd, struct v4l2_capability *cap)
 {
@@ -290,4 +291,187 @@ int nxs_v4l2_set_selection(int fd, struct v4l2_selection *sel)
 int nxs_v4l2_ioctl(int fd, int cmd, void *arg)
 {
 	return ioctl(fd, cmd, arg);
+}
+
+int nxs_v4l2_subdev_set_format(int fd, uint32_t w, uint32_t h, uint32_t code,
+			       uint32_t field)
+{
+	struct v4l2_subdev_format fmt;
+	struct v4l2_mbus_framefmt *mbusfmt;
+
+	memset(&fmt, 0, sizeof(fmt));
+	fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+	fmt.pad = 0;
+	mbusfmt = &fmt.format;
+	mbusfmt->width = w;
+	mbusfmt->height = h;
+	mbusfmt->code = code;
+	mbusfmt->field = field;
+	/* colorspace, ycbcr_enc, quantization, xfer_func is not used */
+
+	return ioctl(fd, VIDIOC_SUBDEV_S_FMT, &fmt);
+}
+
+int nxs_v4l2_subdev_get_format(int fd, uint32_t *w, uint32_t *h, uint32_t *code,
+			       uint32_t *field)
+{
+	struct v4l2_subdev_format fmt;
+	struct v4l2_mbus_framefmt *mbusfmt;
+	int ret;
+
+	memset(&fmt, 0, sizeof(fmt));
+	fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+	fmt.pad = 0;
+
+	ret = ioctl(fd, VIDIOC_SUBDEV_G_FMT, &fmt);
+	if (ret)
+		return ret;
+
+	mbusfmt = &fmt.format;
+	*w = mbusfmt->width;
+	*h = mbusfmt->height;
+	*code = mbusfmt->code;
+	*field = mbusfmt->field;
+
+	return 0;
+}
+
+int nxs_v4l2_subdev_try_format(int fd, uint32_t w, uint32_t h, uint32_t code,
+			       uint32_t field)
+{
+	struct v4l2_subdev_format fmt;
+	struct v4l2_mbus_framefmt *mbusfmt;
+
+	memset(&fmt, 0, sizeof(fmt));
+	fmt.which = V4L2_SUBDEV_FORMAT_TRY;
+	fmt.pad = 0;
+	mbusfmt = &fmt.format;
+	mbusfmt->width = w;
+	mbusfmt->height = h;
+	mbusfmt->code = code;
+	mbusfmt->field = field;
+	/* colorspace, ycbcr_enc, quantization, xfer_func is not used */
+
+	return ioctl(fd, VIDIOC_SUBDEV_S_FMT, &fmt);
+}
+
+int nxs_v4l2_subdev_set_dstformat(int fd, uint32_t w, uint32_t h, uint32_t code,
+				  uint32_t field)
+{
+	struct v4l2_subdev_format fmt;
+	struct v4l2_mbus_framefmt *mbusfmt;
+
+	memset(&fmt, 0, sizeof(fmt));
+	fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+	fmt.pad = 0;
+	mbusfmt = &fmt.format;
+	mbusfmt->width = w;
+	mbusfmt->height = h;
+	mbusfmt->code = code;
+	mbusfmt->field = field;
+	/* colorspace, ycbcr_enc, quantization, xfer_func is not used */
+
+	return ioctl(fd, NXSIOC_S_DSTFMT, &fmt);
+}
+
+int nxs_v4l2_subdev_get_dstformat(int fd, uint32_t *w, uint32_t *h,
+				  uint32_t *code, uint32_t *field)
+{
+	struct v4l2_subdev_format fmt;
+	struct v4l2_mbus_framefmt *mbusfmt;
+	int ret;
+
+	memset(&fmt, 0, sizeof(fmt));
+	fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+	fmt.pad = 0;
+
+	ret = ioctl(fd, NXSIOC_G_DSTFMT, &fmt);
+	if (ret)
+		return ret;
+
+	mbusfmt = &fmt.format;
+	*w = mbusfmt->width;
+	*h = mbusfmt->height;
+	*code = mbusfmt->code;
+	*field = mbusfmt->field;
+
+	return 0;
+}
+
+int nxs_v4l2_subdev_try_dstformat(int fd, uint32_t w, uint32_t h, uint32_t code,
+				  uint32_t field)
+{
+	struct v4l2_subdev_format fmt;
+	struct v4l2_mbus_framefmt *mbusfmt;
+
+	memset(&fmt, 0, sizeof(fmt));
+	fmt.which = V4L2_SUBDEV_FORMAT_TRY;
+	fmt.pad = 0;
+	mbusfmt = &fmt.format;
+	mbusfmt->width = w;
+	mbusfmt->height = h;
+	mbusfmt->code = code;
+	mbusfmt->field = field;
+	/* colorspace, ycbcr_enc, quantization, xfer_func is not used */
+
+	return ioctl(fd, NXSIOC_S_DSTFMT, &fmt);
+}
+
+int nxs_v4l2_subdev_set_crop(int fd, uint32_t x, uint32_t y, uint32_t w,
+			     uint32_t h)
+{
+	struct v4l2_subdev_crop crop;
+
+	memset(&crop, 0, sizeof(crop));
+	crop.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+	crop.rect.left = x;
+	crop.rect.top = y;
+	crop.rect.width = w;
+	crop.rect.height = h;
+
+	return ioctl(fd, VIDIOC_SUBDEV_S_CROP, &crop);
+}
+
+int nxs_v4l2_subdev_get_crop(int fd, uint32_t *x, uint32_t *y, uint32_t *w,
+			     uint32_t *h)
+{
+	int ret;
+	struct v4l2_subdev_crop crop;
+
+	crop.which = V4L2_SUBDEV_FORMAT_ACTIVE;
+	ret = ioctl(fd, VIDIOC_SUBDEV_G_CROP, &crop);
+	if (ret)
+		return ret;
+
+	*x = crop.rect.left;
+	*y = crop.rect.top;
+	*w = crop.rect.width;
+	*h = crop.rect.height;
+
+	return 0;
+}
+
+int nxs_v4l2_subdev_try_crop(int fd, uint32_t x, uint32_t y, uint32_t w,
+			     uint32_t h)
+{
+	struct v4l2_subdev_crop crop;
+
+	memset(&crop, 0, sizeof(crop));
+	crop.which = V4L2_SUBDEV_FORMAT_TRY;
+	crop.rect.left = x;
+	crop.rect.top = y;
+	crop.rect.width = w;
+	crop.rect.height = h;
+
+	return ioctl(fd, VIDIOC_SUBDEV_S_CROP, &crop);
+}
+
+int nxs_v4l2_subdev_start(int fd)
+{
+	return ioctl(fd, NXSIOC_START);
+}
+
+int nxs_v4l2_subdev_stop(int fd)
+{
+	return ioctl(fd, NXSIOC_STOP);
 }
