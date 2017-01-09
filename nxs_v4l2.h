@@ -43,6 +43,6 @@ struct nxs_control_tpgen {
 #define NXSIOC_S_DSTFMT _IOW('V', NXS_IOC_BASE + 2, struct v4l2_subdev_format)
 #define NXSIOC_G_DSTFMT _IOWR('V', NXS_IOC_BASE + 3, struct v4l2_subdev_format)
 #define NXSIOC_START	_IO('V', NXS_IOC_BASE + 4)
-#define NXSIOC_STOP	_IO('V', NXS_IOC_BASE + 4)
+#define NXSIOC_STOP	_IO('V', NXS_IOC_BASE + 5)
 
 #endif
